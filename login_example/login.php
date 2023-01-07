@@ -36,17 +36,20 @@ session_start();
 
 						//hashed check
 						$hashed = $user_data['usr_pass'];
+						$usr_id = $user_data['usr_id'];
 
 						if($user_data['usr_pass'] === $hashed)
 						{
-							if($user_data['usr_id'] === $has_rights || $user_data['usr_id'] === $is_admin)
+							//if the user has not have the sufficient 
+							if($usr_id === $has_rights || $usr_id === $is_admin)
 							{
-								$_SESSION['usr_id'] = $user_data['usr_id'];
+								$_SESSION['usr_id'] = $usr_id;
 								header("Location: index.php");
 								die;
 							} else 
 							{
 								echo 'Insufficient user rights!';
+								echo "Your user ID is: " . $usr_id;
 							}
 
 							

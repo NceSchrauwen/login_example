@@ -1,34 +1,40 @@
 <?php 
-session_start();
+session_start(); //start session
 
+	//include local files to utilize the functions and variables it has
 	include("connection.php");
 	include("functions.php");
 
 	if($_SERVER['REQUEST_METHOD'] == "POST")
 	{
-		//something was posted
-		$usr_id = $_POST['usr_id'];
+		//variables were posted
 		$usr_name = $_POST['usr_name'];
 		$usr_pass = $_POST['usr_pass'];
 
+		//2 = admin, 1 = read only, 0 = no access, wait for permission
+		//set to 0 for admin (2) to review his rights as a user and potentially change it
+		$usr_id = '0'; 
+
+		//the higher the cost the more secure your password is encrypted
 		$options = [
-			'cost' => 10,
+			'cost' => 12,
 		];
 
-		$hashed = password_hash($usr_pass, PASSWORD_DEFAULT, $options);
+		$hashed = password_hash($usr_pass, PASSWORD_DEFAULT, $options); //hash the password
 		
+		//first bit of original check:
+		//( !empty($usr_id) &&
 
-		if(!empty($usr_id) && !empty($usr_name) && !empty($usr_pass) && !is_numeric($usr_name))
+		//check to see if all fields are filled, also the username cannot be nummeric
+		if(!empty($usr_name) && !empty($usr_pass) && !is_numeric($usr_name))
 		{
 			//save to database
-			$query = "INSERT INTO usr_test ( usr_id, usr_name, usr_pass) VALUES (?, ?, ?);";
+			$query = "INSERT INTO usr_test (usr_id, usr_name, usr_pass) VALUES (?, ?, ?);";
 
 			$stmt = mysqli_prepare($con, $query);
-			mysqli_stmt_bind_param($stmt, 'iss', $usr_id, $usr_name, $hashed);
+			mysqli_stmt_bind_param($stmt, 'sss', $usr_id, $usr_name, $hashed);
 			mysqli_stmt_execute($stmt);
 
-			//header("Location: login.php");
-			//die;
 
 		} else
 		{
@@ -38,12 +44,11 @@ session_start();
 
 	if(isset($_POST['btn_save']))
 	{
-		// echo "<script type = 'text/javascript'>alert('Wait for user rights or something idk');</script>";
 
 		header("Location: login.php?alert=true");
-		exit;
+		exit; //or die
 
-	}
+	} 
 
 ?>
 
@@ -90,21 +95,10 @@ session_start();
 		<form method="post">
 			<div style="font-size: 20px;margin: 10px;color: white;">Signup</div>
 
-			<input id="text" type="text" name="usr_id" placeholder="id"><br><br>
-			<input id="text" type="text" name="usr_name" placeholder="usr name"><br><br>
-			<input id="text" type="password" name="usr_pass" placeholder="usr password"><br><br>
+			<input id="usr_name" type="text" name="usr_name" placeholder="usr name"><br><br>
+			<input id="usr_pass" type="password" name="usr_pass" placeholder="usr password"><br><br>
 
-			<!-- <input id="button" type="submit" value="Signup"><br><br> -->
-
-
-			<!-- MAKE A POP-UP IN JAVASCRIPT? OR JUST TEXT? IDK PHP CAN'T DO IT -->
-			
-			<!-- <a href="login.php">Click to Login</a><br><br> -->
-			
 			<input type="submit" name = "btn_save" value="Save and redirect" />
-			<!-- <form action="login.php"> -->
-
-			
 
 			</form>
 		</form>
