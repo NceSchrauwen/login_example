@@ -15,9 +15,9 @@ session_start();
 		//something was posted
 		
 		$usr_name = $_POST['usr_name'];
-		$usr_pass = $_POST['usr_pass'];
+		$plain_pass = $_POST['usr_pass'];
 
-		if(!empty($usr_name) && !empty($usr_pass) && !is_numeric($usr_name))
+		if(!empty($usr_name) && !empty($plain_pass) && !is_numeric($usr_name))
 		{
 
 			//read from database
@@ -31,22 +31,28 @@ session_start();
 
 					    $user_data = mysqli_fetch_assoc($result);
 
-						$has_rights = '1';
-						$is_admin = '2';
+						// $has_rights = '1';
+						// $is_admin = '2';
+
+						$check = '2';
 
 						//hashed check
-						$hashed = $user_data['usr_pass'];
+						$hashed_pass = $user_data['usr_pass'];
+						$usr_id = $user_data['usr_id'];
 
-						if($user_data['usr_pass'] === $hashed)
+						if(password_verify($plain_pass, $hashed_pass))  
 						{
-							if($user_data['usr_id'] === $has_rights || $user_data['usr_id'] === $is_admin)
+					
+							//if the user has not have the sufficient s
+							if($usr_id === $check) //$usr_id === $has_rights || $usr_id === $is_admin
 							{
-								$_SESSION['usr_id'] = $user_data['usr_id'];
+								$_SESSION['usr_id'] = $usr_id;
 								header("Location: index.php");
 								die;
 							} else 
 							{
 								echo 'Insufficient user rights!';
+								echo "Your user ID is: " . $usr_id;
 							}
 
 							
