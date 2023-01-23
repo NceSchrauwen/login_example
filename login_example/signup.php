@@ -13,17 +13,14 @@ session_start(); //start session
 
 		//2 = admin, 1 = read only, 0 = no access, wait for permission
 		//set to 0 for admin (2) to review his rights as a user and potentially change it
-		$usr_id = '0'; 
+		$usr_id = '2'; 
 
-		//the higher the cost the more secure your password is encrypted
+		//the higher the cost the harder it is to crack the password
 		$options = [
 			'cost' => 12,
 		];
 
 		$hashed = password_hash($usr_pass, PASSWORD_DEFAULT, $options); //hash the password
-		
-		//first bit of original check:
-		//( !empty($usr_id) &&
 
 		//check to see if all fields are filled, also the username cannot be nummeric
 		if(!empty($usr_name) && !empty($usr_pass) && !is_numeric($usr_name))
